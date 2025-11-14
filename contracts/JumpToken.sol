@@ -2,14 +2,25 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title JumpToken
- * @dev Basic ERC20 token structure for Jump game rewards
+ * @dev ERC20 token with minting, burning, and pausable functionality for Jump game rewards
  */
-contract JumpToken is ERC20 {
+contract JumpToken is ERC20, AccessControl, Pausable {
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    
+    /**
+     * @dev Constructor sets up the token with name and symbol
+     * Grants DEFAULT_ADMIN_ROLE, MINTER_ROLE, and PAUSER_ROLE to deployer
+     */
     constructor() ERC20("Jump Token", "JUMP") {
-        // Initial setup
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
     }
 }
 
