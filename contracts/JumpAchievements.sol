@@ -18,6 +18,34 @@ contract JumpAchievements is ERC1155, AccessControl, Pausable {
     string public symbol = "JUMP-ACH";
     
     /**
+     * @dev Achievement metadata structure
+     */
+    struct Achievement {
+        string name;
+        string description;
+        uint256 category;  // 0: Score Milestone, 1: Streak, 2: Special Event, 3: Seasonal, 4: Rare
+        uint256 rarity;    // 0: Common, 1: Rare, 2: Epic, 3: Legendary
+        bool exists;
+        bool transferable;
+    }
+    
+    // Mapping from token ID to achievement metadata
+    mapping(uint256 => Achievement) public achievements;
+    
+    // Achievement categories
+    uint256 public constant CATEGORY_SCORE_MILESTONE = 0;
+    uint256 public constant CATEGORY_STREAK = 1;
+    uint256 public constant CATEGORY_SPECIAL_EVENT = 2;
+    uint256 public constant CATEGORY_SEASONAL = 3;
+    uint256 public constant CATEGORY_RARE = 4;
+    
+    // Rarity levels
+    uint256 public constant RARITY_COMMON = 0;
+    uint256 public constant RARITY_RARE = 1;
+    uint256 public constant RARITY_EPIC = 2;
+    uint256 public constant RARITY_LEGENDARY = 3;
+    
+    /**
      * @dev Constructor sets up the ERC1155 with base URI
      * Grants DEFAULT_ADMIN_ROLE, MINTER_ROLE, PAUSER_ROLE to deployer
      */
