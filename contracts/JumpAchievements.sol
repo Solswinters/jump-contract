@@ -57,6 +57,40 @@ contract JumpAchievements is ERC1155, AccessControl, Pausable {
     }
     
     /**
+     * @dev Creates a new achievement type
+     * @param id The achievement token ID
+     * @param achievementName The name of the achievement
+     * @param description The description of the achievement
+     * @param category The category (0-4)
+     * @param rarity The rarity level (0-3)
+     * @param transferable Whether the achievement can be transferred
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     * - Achievement ID must not already exist
+     */
+    function createAchievement(
+        uint256 id,
+        string memory achievementName,
+        string memory description,
+        uint256 category,
+        uint256 rarity,
+        bool transferable
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!achievements[id].exists, "JumpAchievements: achievement already exists");
+        require(category <= CATEGORY_RARE, "JumpAchievements: invalid category");
+        require(rarity <= RARITY_LEGENDARY, "JumpAchievements: invalid rarity");
+        
+        achievements[id] = Achievement({
+            name: achievementName,
+            description: description,
+            category: category,
+            rarity: rarity,
+            exists: true,
+            transferable: transferable
+        });
+    }
+    
+    /**
      * @dev Mints a single achievement to an address
      * @param to The address to receive the achievement
      * @param id The achievement token ID
