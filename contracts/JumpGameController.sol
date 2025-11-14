@@ -139,5 +139,39 @@ contract JumpGameController is AccessControl, ReentrancyGuard, Pausable {
         players[player].lastClaimTimestamp = block.timestamp;
         emit RewardsClaimed(player, tokenReward, achievementId);
     }
+    
+    /**
+     * @dev Pauses the game controller
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     */
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
+    }
+    
+    /**
+     * @dev Unpauses the game controller
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     */
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
+    }
+    
+    /**
+     * @dev Gets player statistics
+     * @param player The player's address
+     * @return highestScore The player's highest score
+     * @return highestTier The player's highest tier reached
+     * @return totalRewards Total rewards claimed
+     */
+    function getPlayerStats(address player) 
+        public 
+        view 
+        returns (uint256 highestScore, uint256 highestTier, uint256 totalRewards) 
+    {
+        PlayerData memory data = players[player];
+        return (data.highestScore, data.highestTier, data.totalRewardsClaimed);
+    }
 }
 
