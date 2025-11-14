@@ -56,5 +56,30 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         _approve(from, msg.sender, currentAllowance - amount);
         _burn(from, amount);
     }
+    
+    /**
+     * @dev Pauses all token transfers
+     * Requirements:
+     * - Caller must have PAUSER_ROLE
+     */
+    function pause() public onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+    
+    /**
+     * @dev Unpauses all token transfers
+     * Requirements:
+     * - Caller must have PAUSER_ROLE
+     */
+    function unpause() public onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+    
+    /**
+     * @dev Override _update to add pausable functionality to transfers
+     */
+    function _update(address from, address to, uint256 value) internal virtual override whenNotPaused {
+        super._update(from, to, value);
+    }
 }
 
