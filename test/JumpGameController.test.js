@@ -93,5 +93,31 @@ describe("JumpGameController", function () {
       ).to.be.reverted;
     });
   });
+  
+  describe("Batch Score Submission", function () {
+    it("Should submit scores for multiple players", async function () {
+      const players = [player1.address, player2.address];
+      const scores = [150, 500];
+      
+      await gameController.connect(gameOperator).batchSubmitScores(players, scores);
+      
+      const [score1, tier1] = await gameController.getPlayerStats(player1.address);
+      const [score2, tier2] = await gameController.getPlayerStats(player2.address);
+      
+      expect(score1).to.equal(150);
+      expect(score2).to.equal(500);
+      expect(tier1).to.equal(2);
+      expect(tier2).to.equal(3);
+    });
+    
+    it("Should revert when arrays length mismatch", async function () {
+      const players = [player1.address, player2.address];
+      const scores = [150];
+      
+      await expect(
+        gameController.connect(gameOperator).batchSubmitScores(players, scores)
+      ).to.be.revertedWith("JumpGameController: arrays length mismatch");
+    });
+  });
 });
 
