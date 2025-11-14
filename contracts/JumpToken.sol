@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
@@ -114,6 +115,21 @@ contract JumpToken is ERC20, AccessControl, Pausable {
             require(recipients[i] != address(0), "JumpToken: transfer to zero address");
             _transfer(msg.sender, recipients[i], amounts[i]);
         }
+    }
+    
+    /**
+     * @dev Recovers accidentally sent ERC20 tokens to this contract
+     * @param token The ERC20 token address to recover
+     * @param to The address to send recovered tokens to
+     * @param amount The amount of tokens to recover
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     * - Cannot recover JUMP tokens (prevents admin abuse)
+     */
+    function recoverERC20(address token, address to, uint256 amount) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(token != address(this), "JumpToken: cannot recover JUMP tokens");
+        require(to != address(0), "JumpToken: recover to zero address");
+        IERC20(token).transfer(to, amount);
     }
     
     /**
