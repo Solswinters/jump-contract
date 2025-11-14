@@ -40,9 +40,11 @@ contract JumpToken is ERC20, AccessControl, Pausable {
      * Requirements:
      * - Caller must have MINTER_ROLE
      * - Contract must not be paused
+     * - Total supply after minting must not exceed MAX_SUPPLY
      */
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) whenNotPaused {
         require(to != address(0), "JumpToken: mint to zero address");
+        require(totalSupply() + amount <= MAX_SUPPLY, "JumpToken: max supply exceeded");
         _mint(to, amount);
     }
     
