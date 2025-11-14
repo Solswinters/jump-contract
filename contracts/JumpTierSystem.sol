@@ -85,5 +85,45 @@ contract JumpTierSystem is AccessControl {
         
         tierCount = 5;
     }
+    
+    /**
+     * @dev Gets the tier level for a given score
+     * @param score The player's score
+     * @return tierLevel The tier level (0 if no tier found)
+     */
+    function getTierForScore(uint256 score) public view returns (uint256 tierLevel) {
+        for (uint256 i = 1; i <= tierCount; i++) {
+            if (tiers[i].exists && score >= tiers[i].minScore && score <= tiers[i].maxScore) {
+                return i;
+            }
+        }
+        return 0; // No tier found
+    }
+    
+    /**
+     * @dev Gets the token reward for a given score
+     * @param score The player's score
+     * @return tokenReward The amount of tokens to reward
+     */
+    function getTokenReward(uint256 score) public view returns (uint256 tokenReward) {
+        uint256 tier = getTierForScore(score);
+        if (tier > 0 && tiers[tier].exists) {
+            return tiers[tier].tokenReward;
+        }
+        return 0;
+    }
+    
+    /**
+     * @dev Gets the achievement ID for a given score
+     * @param score The player's score
+     * @return achievementId The achievement ID to award (0 if none)
+     */
+    function getAchievementId(uint256 score) public view returns (uint256 achievementId) {
+        uint256 tier = getTierForScore(score);
+        if (tier > 0 && tiers[tier].exists) {
+            return tiers[tier].achievementId;
+        }
+        return 0;
+    }
 }
 
