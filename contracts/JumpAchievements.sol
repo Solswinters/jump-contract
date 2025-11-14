@@ -137,6 +137,34 @@ contract JumpAchievements is ERC1155, AccessControl, Pausable {
     }
     
     /**
+     * @dev Sets the URI for all token types
+     * @param newuri The new base URI
+     * Requirements:
+     * - Caller must have URI_SETTER_ROLE
+     */
+    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
+        _setURI(newuri);
+    }
+    
+    /**
+     * @dev Pauses all token transfers
+     * Requirements:
+     * - Caller must have PAUSER_ROLE
+     */
+    function pause() public onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+    
+    /**
+     * @dev Unpauses all token transfers
+     * Requirements:
+     * - Caller must have PAUSER_ROLE
+     */
+    function unpause() public onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+    
+    /**
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId)
