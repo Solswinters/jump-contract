@@ -173,5 +173,29 @@ contract JumpGameController is AccessControl, ReentrancyGuard, Pausable {
         PlayerData memory data = players[player];
         return (data.highestScore, data.highestTier, data.totalRewardsClaimed);
     }
+    
+    /**
+     * @dev Batch submit scores for multiple players
+     * @param playersArray Array of player addresses
+     * @param scores Array of scores corresponding to each player
+     * Requirements:
+     * - Caller must have GAME_OPERATOR_ROLE
+     * - Arrays must have the same length
+     */
+    function batchSubmitScores(address[] calldata playersArray, uint256[] calldata scores)
+        public
+        onlyRole(GAME_OPERATOR_ROLE)
+        whenNotPaused
+        nonReentrant
+    {
+        require(playersArray.length == scores.length, "JumpGameController: arrays length mismatch");
+        require(playersArray.length > 0, "JumpGameController: empty arrays");
+        
+        for (uint256 i = 0; i < playersArray.length; i++) {
+            if (playersArray[i] != address(0)) {
+                submitScore(playersArray[i], scores[i]);
+            }
+        }
+    }
 }
 
