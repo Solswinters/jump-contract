@@ -13,6 +13,9 @@ contract JumpToken is ERC20, AccessControl, Pausable {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     
+    uint256 public constant MAX_SUPPLY = 100_000_000 * 10**18; // 100 million tokens
+    uint8 private constant DECIMALS = 18;
+    
     /**
      * @dev Constructor sets up the token with name and symbol
      * Grants DEFAULT_ADMIN_ROLE, MINTER_ROLE, and PAUSER_ROLE to deployer
@@ -21,6 +24,13 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
+    }
+    
+    /**
+     * @dev Returns the number of decimals used for token amounts
+     */
+    function decimals() public pure override returns (uint8) {
+        return DECIMALS;
     }
     
     /**
