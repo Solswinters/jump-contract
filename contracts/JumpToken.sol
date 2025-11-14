@@ -22,5 +22,18 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
     }
+    
+    /**
+     * @dev Mints tokens to a specified address
+     * @param to The address that will receive the minted tokens
+     * @param amount The amount of tokens to mint
+     * Requirements:
+     * - Caller must have MINTER_ROLE
+     * - Contract must not be paused
+     */
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) whenNotPaused {
+        require(to != address(0), "JumpToken: mint to zero address");
+        _mint(to, amount);
+    }
 }
 
