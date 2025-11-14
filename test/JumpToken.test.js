@@ -64,5 +64,39 @@ describe("JumpToken", function () {
       ).to.be.reverted;
     });
   });
+  
+  describe("Burning", function () {
+    beforeEach(async function () {
+      const amount = ethers.parseEther("1000");
+      await jumpToken.mint(addr1.address, amount);
+    });
+    
+    it("Should burn tokens from sender's account", async function () {
+      const burnAmount = ethers.parseEther("100");
+      const initialBalance = await jumpToken.balanceOf(addr1.address);
+      
+      await jumpToken.connect(addr1).burn(burnAmount);
+      
+      expect(await jumpToken.balanceOf(addr1.address))
+        .to.equal(initialBalance - burnAmount);
+    });
+    
+    it("Should emit TokensBurned event", async function () {
+      const burnAmount = ethers.parseEther("100");
+      await expect(jumpToken.connect(addr1).burn(burnAmount))
+        .to.emit(jumpToken, "TokensBurned")
+        .withArgs(addr1.address, burnAmount);
+    });
+    
+    it("Should burnFrom with allowance", async function () {
+      const burnAmount = ethers.parseEther("100");
+      
+      await jumpToken.connect(addr1).approve(addr2.address, burnAmount);
+      await jumpToken.connect(addr2).burnFrom(addr1.address, burnAmount);
+      
+      expect(await jumpToken.balanceOf(addr1.address))
+        .to.equal(ethers.parseEther("900"));
+    });
+  });
 });
 
