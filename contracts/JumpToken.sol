@@ -52,6 +52,7 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         require(to != address(0), "JumpToken: mint to zero address");
         require(totalSupply() + amount <= MAX_SUPPLY, "JumpToken: max supply exceeded");
         _mint(to, amount);
+        emit TokensMinted(to, amount, msg.sender);
     }
     
     /**
@@ -60,6 +61,7 @@ contract JumpToken is ERC20, AccessControl, Pausable {
      */
     function burn(uint256 amount) public whenNotPaused {
         _burn(msg.sender, amount);
+        emit TokensBurned(msg.sender, amount);
     }
     
     /**
@@ -73,6 +75,7 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         require(currentAllowance >= amount, "JumpToken: insufficient allowance");
         _approve(from, msg.sender, currentAllowance - amount);
         _burn(from, amount);
+        emit TokensBurned(from, amount);
     }
     
     /**
@@ -82,6 +85,7 @@ contract JumpToken is ERC20, AccessControl, Pausable {
      */
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
+        emit ContractPaused(msg.sender);
     }
     
     /**
@@ -91,6 +95,7 @@ contract JumpToken is ERC20, AccessControl, Pausable {
      */
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
+        emit ContractUnpaused(msg.sender);
     }
     
     /**
