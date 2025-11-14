@@ -136,5 +136,48 @@ describe("JumpToken", function () {
         .withArgs(owner.address);
     });
   });
+  
+  describe("Max Supply", function () {
+    it("Should enforce max supply limit", async function () {
+      const maxSupply = await jumpToken.MAX_SUPPLY();
+      const currentSupply = await jumpToken.totalSupply();
+      const remaining = maxSupply - currentSupply;
+      
+      // Should succeed when minting within limit
+      await jumpToken.mint(addr1.address, remaining);
+      expect(await jumpToken.totalSupply()).to.equal(maxSupply);
+      
+      // Should revert when exceeding max supply
+      await expect(
+        jumpToken.mint(addr2.address, 1)
+      ).to.be.revertedWith("JumpToken: max supply exceeded");
+    });
+  });
+  
+  describe("Batch Transfer", function () {
+    beforeEach(async function () {
+      const amount = ethers.parseEther("1000");
+      await jumpToken.mint(addr1.address, amount);
+    });
+    
+    it("Should transfer to multiple recipients", async function () {
+      const recipients = [addr2.address, owner.address];
+      const amounts = [ethers.parseEther("100"), ethers.parseEther("200")];
+      
+      await jumpToken.connect(addr1).batchTransfer(recipients, amounts);
+      
+      expect(await jumpToken.balanceOf(addr2.address)).to.equal(ethers.parseEther("100"));
+      expect(await jumpToken.balanceOf(owner.address)).to.equal(ethers.parseEther("200"));
+    });
+    
+    it("Should revert when arrays length mismatch", async function () {
+      const recipients = [addr2.address, owner.address];
+      const amounts = [ethers.parseEther("100")];
+      
+      await expect(
+        jumpToken.connect(addr1).batchTransfer(recipients, amounts)
+      ).to.be.revertedWith("JumpToken: arrays length mismatch");
+    });
+  });
 });
 
