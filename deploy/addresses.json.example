@@ -1,0 +1,38 @@
+{
+  "networks": {
+    "baseMainnet": {
+      "jumpToken": "",
+      "jumpAchievements": "",
+      "jumpTierSystem": "",
+      "jumpGameController": "",
+      "deployedAt": "",
+      "deployer": ""
+    },
+    "baseTestnet": {
+      "jumpToken": "",
+      "jumpAchievements": "",
+      "jumpTierSystem": "",
+      "jumpGameController": "",
+      "deployedAt": "",
+      "deployer": ""
+    },
+    "localhost": {
+      "jumpToken": "",
+      "jumpAchievements": "",
+      "jumpTierSystem": "",
+      "jumpGameController": "",
+      "deployedAt": "",
+      "deployer": ""
+    }
+  },
+  "roles": {
+    "minter": {
+      "jumpToken": "",
+      "jumpAchievements": ""
+    },
+    "gameOperator": {
+      "jumpGameController": ""
+    }
+  }
+}
+
