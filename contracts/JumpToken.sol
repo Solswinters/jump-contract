@@ -16,6 +16,12 @@ contract JumpToken is ERC20, AccessControl, Pausable {
     uint256 public constant MAX_SUPPLY = 100_000_000 * 10**18; // 100 million tokens
     uint8 private constant DECIMALS = 18;
     
+    // Events
+    event TokensMinted(address indexed to, uint256 amount, address indexed minter);
+    event TokensBurned(address indexed from, uint256 amount);
+    event ContractPaused(address indexed pauser);
+    event ContractUnpaused(address indexed pauser);
+    
     /**
      * @dev Constructor sets up the token with name and symbol
      * Grants DEFAULT_ADMIN_ROLE, MINTER_ROLE, and PAUSER_ROLE to deployer
