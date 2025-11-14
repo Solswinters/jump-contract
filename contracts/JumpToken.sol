@@ -35,5 +35,26 @@ contract JumpToken is ERC20, AccessControl, Pausable {
         require(to != address(0), "JumpToken: mint to zero address");
         _mint(to, amount);
     }
+    
+    /**
+     * @dev Burns tokens from caller's account
+     * @param amount The amount of tokens to burn
+     */
+    function burn(uint256 amount) public whenNotPaused {
+        _burn(msg.sender, amount);
+    }
+    
+    /**
+     * @dev Burns tokens from a specified address (requires allowance)
+     * @param from The address to burn tokens from
+     * @param amount The amount of tokens to burn
+     */
+    function burnFrom(address from, uint256 amount) public whenNotPaused {
+        require(from != address(0), "JumpToken: burn from zero address");
+        uint256 currentAllowance = allowance(from, msg.sender);
+        require(currentAllowance >= amount, "JumpToken: insufficient allowance");
+        _approve(from, msg.sender, currentAllowance - amount);
+        _burn(from, amount);
+    }
 }
 
