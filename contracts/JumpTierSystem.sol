@@ -125,5 +125,73 @@ contract JumpTierSystem is AccessControl {
         }
         return 0;
     }
+    
+    /**
+     * @dev Updates an existing tier
+     * @param tierLevel The tier level to update
+     * @param minScore The minimum score for this tier
+     * @param maxScore The maximum score for this tier
+     * @param tokenReward The token reward amount
+     * @param achievementId The achievement ID to award
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     * - Tier must exist
+     */
+    function updateTier(
+        uint256 tierLevel,
+        uint256 minScore,
+        uint256 maxScore,
+        uint256 tokenReward,
+        uint256 achievementId
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(tiers[tierLevel].exists, "JumpTierSystem: tier does not exist");
+        require(minScore <= maxScore, "JumpTierSystem: invalid score range");
+        
+        tiers[tierLevel] = Tier({
+            minScore: minScore,
+            maxScore: maxScore,
+            tokenReward: tokenReward,
+            achievementId: achievementId,
+            exists: true
+        });
+        
+        emit TierUpdated(tierLevel, minScore, maxScore, tokenReward);
+    }
+    
+    /**
+     * @dev Creates a new tier
+     * @param tierLevel The tier level to create
+     * @param minScore The minimum score for this tier
+     * @param maxScore The maximum score for this tier
+     * @param tokenReward The token reward amount
+     * @param achievementId The achievement ID to award
+     * Requirements:
+     * - Caller must have DEFAULT_ADMIN_ROLE
+     * - Tier must not already exist
+     */
+    function createTier(
+        uint256 tierLevel,
+        uint256 minScore,
+        uint256 maxScore,
+        uint256 tokenReward,
+        uint256 achievementId
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!tiers[tierLevel].exists, "JumpTierSystem: tier already exists");
+        require(minScore <= maxScore, "JumpTierSystem: invalid score range");
+        
+        tiers[tierLevel] = Tier({
+            minScore: minScore,
+            maxScore: maxScore,
+            tokenReward: tokenReward,
+            achievementId: achievementId,
+            exists: true
+        });
+        
+        if (tierLevel > tierCount) {
+            tierCount = tierLevel;
+        }
+        
+        emit TierCreated(tierLevel, minScore, maxScore, tokenReward);
+    }
 }
 
