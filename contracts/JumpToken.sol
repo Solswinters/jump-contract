@@ -99,6 +99,24 @@ contract JumpToken is ERC20, AccessControl, Pausable {
     }
     
     /**
+     * @dev Batch transfer tokens to multiple addresses
+     * @param recipients Array of recipient addresses
+     * @param amounts Array of token amounts corresponding to each recipient
+     * Requirements:
+     * - Arrays must have the same length
+     * - All recipients must be valid addresses
+     */
+    function batchTransfer(address[] calldata recipients, uint256[] calldata amounts) public whenNotPaused {
+        require(recipients.length == amounts.length, "JumpToken: arrays length mismatch");
+        require(recipients.length > 0, "JumpToken: empty arrays");
+        
+        for (uint256 i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "JumpToken: transfer to zero address");
+            _transfer(msg.sender, recipients[i], amounts[i]);
+        }
+    }
+    
+    /**
      * @dev Override _update to add pausable functionality to transfers
      */
     function _update(address from, address to, uint256 value) internal virtual override whenNotPaused {
