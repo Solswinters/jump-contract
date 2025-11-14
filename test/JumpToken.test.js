@@ -98,5 +98,43 @@ describe("JumpToken", function () {
         .to.equal(ethers.parseEther("900"));
     });
   });
+  
+  describe("Pause Functionality", function () {
+    beforeEach(async function () {
+      const amount = ethers.parseEther("1000");
+      await jumpToken.mint(addr1.address, amount);
+      await jumpToken.mint(addr2.address, amount);
+    });
+    
+    it("Should pause all transfers", async function () {
+      await jumpToken.pause();
+      
+      await expect(
+        jumpToken.connect(addr1).transfer(addr2.address, ethers.parseEther("100"))
+      ).to.be.reverted;
+    });
+    
+    it("Should unpause and allow transfers", async function () {
+      await jumpToken.pause();
+      await jumpToken.unpause();
+      
+      await expect(
+        jumpToken.connect(addr1).transfer(addr2.address, ethers.parseEther("100"))
+      ).to.not.be.reverted;
+    });
+    
+    it("Should emit ContractPaused event", async function () {
+      await expect(jumpToken.pause())
+        .to.emit(jumpToken, "ContractPaused")
+        .withArgs(owner.address);
+    });
+    
+    it("Should emit ContractUnpaused event", async function () {
+      await jumpToken.pause();
+      await expect(jumpToken.unpause())
+        .to.emit(jumpToken, "ContractUnpaused")
+        .withArgs(owner.address);
+    });
+  });
 });
 
