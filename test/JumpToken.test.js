@@ -35,5 +35,34 @@ describe("JumpToken", function () {
       expect(await jumpToken.hasRole(PAUSER_ROLE, owner.address)).to.be.true;
     });
   });
+  
+  describe("Minting", function () {
+    it("Should mint tokens to an address", async function () {
+      const amount = ethers.parseEther("100");
+      await jumpToken.mint(addr1.address, amount);
+      expect(await jumpToken.balanceOf(addr1.address)).to.equal(amount);
+    });
+    
+    it("Should emit TokensMinted event", async function () {
+      const amount = ethers.parseEther("100");
+      await expect(jumpToken.mint(addr1.address, amount))
+        .to.emit(jumpToken, "TokensMinted")
+        .withArgs(addr1.address, amount, owner.address);
+    });
+    
+    it("Should revert when minting to zero address", async function () {
+      const amount = ethers.parseEther("100");
+      await expect(
+        jumpToken.mint(ethers.ZeroAddress, amount)
+      ).to.be.revertedWith("JumpToken: mint to zero address");
+    });
+    
+    it("Should revert when non-minter tries to mint", async function () {
+      const amount = ethers.parseEther("100");
+      await expect(
+        jumpToken.connect(addr1).mint(addr2.address, amount)
+      ).to.be.reverted;
+    });
+  });
 });
 
