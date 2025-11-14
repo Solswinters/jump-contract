@@ -57,6 +57,52 @@ contract JumpAchievements is ERC1155, AccessControl, Pausable {
     }
     
     /**
+     * @dev Mints a single achievement to an address
+     * @param to The address to receive the achievement
+     * @param id The achievement token ID
+     * @param amount The amount of tokens to mint
+     * @param data Additional data
+     * Requirements:
+     * - Caller must have MINTER_ROLE
+     * - Achievement must exist
+     */
+    function mint(
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public onlyRole(MINTER_ROLE) whenNotPaused {
+        require(to != address(0), "JumpAchievements: mint to zero address");
+        require(achievements[id].exists, "JumpAchievements: achievement does not exist");
+        _mint(to, id, amount, data);
+    }
+    
+    /**
+     * @dev Mints multiple achievements to an address in batch
+     * @param to The address to receive the achievements
+     * @param ids Array of achievement token IDs
+     * @param amounts Array of amounts corresponding to each ID
+     * @param data Additional data
+     * Requirements:
+     * - Caller must have MINTER_ROLE
+     * - All achievements must exist
+     */
+    function mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) public onlyRole(MINTER_ROLE) whenNotPaused {
+        require(to != address(0), "JumpAchievements: mint to zero address");
+        
+        for (uint256 i = 0; i < ids.length; i++) {
+            require(achievements[ids[i]].exists, "JumpAchievements: achievement does not exist");
+        }
+        
+        _mintBatch(to, ids, amounts, data);
+    }
+    
+    /**
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId)
