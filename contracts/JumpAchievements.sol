@@ -165,6 +165,33 @@ contract JumpAchievements is ERC1155, AccessControl, Pausable {
     }
     
     /**
+     * @dev Override _update to enforce transfer restrictions and pause functionality
+     * @param from The address transferring from
+     * @param to The address transferring to
+     * @param ids Array of token IDs
+     * @param values Array of token amounts
+     */
+    function _update(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory values
+    ) internal virtual override whenNotPaused {
+        // Allow minting (from == 0) and burning (to == 0)
+        if (from != address(0) && to != address(0)) {
+            // Check if any of the tokens being transferred are non-transferable
+            for (uint256 i = 0; i < ids.length; i++) {
+                require(
+                    achievements[ids[i]].transferable,
+                    "JumpAchievements: soulbound achievement cannot be transferred"
+                );
+            }
+        }
+        
+        super._update(from, to, ids, values);
+    }
+    
+    /**
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId)
