@@ -20,6 +20,28 @@ contract JumpGameController is AccessControl, ReentrancyGuard, Pausable {
     JumpAchievements public jumpAchievements;
     JumpTierSystem public tierSystem;
     
+    /**
+     * @dev Player data structure
+     */
+    struct PlayerData {
+        uint256 highestScore;
+        uint256 highestTier;
+        uint256 totalRewardsClaimed;
+        uint256 lastClaimTimestamp;
+        bool exists;
+    }
+    
+    // Mapping from player address to their data
+    mapping(address => PlayerData) public players;
+    
+    // Total players registered
+    uint256 public totalPlayers;
+    
+    // Events
+    event ScoreSubmitted(address indexed player, uint256 score, uint256 tier);
+    event RewardsClaimed(address indexed player, uint256 tokenAmount, uint256 achievementId);
+    event PlayerRegistered(address indexed player);
+    
     constructor(
         address _jumpToken,
         address _jumpAchievements,
